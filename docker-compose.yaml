@@ -1,5 +1,5 @@
 services:
   my-app:
-    image: ricksances/interview_dzhatdoe_kameleoon:latest
+    image: ricksancez/interview_dzhatdoev_kameleoon:latest
     ports:
       - "8080:8080"
