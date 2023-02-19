@@ -26,7 +26,7 @@ public class AuthorizationController {
 
     @PostMapping(("/registration"))
     @ResponseBody
-    public ResponseEntity<PersonDTO> registration (@RequestBody @Valid RegistrationRequest request) {
+    public ResponseEntity<?> registration (@RequestBody @Valid RegistrationRequest request) {
         Person person = request.convertToPerson();
         registrationService.register(person);
         return new ResponseEntity<>(PersonDTO.convertToDto(person), HttpStatus.CREATED);
