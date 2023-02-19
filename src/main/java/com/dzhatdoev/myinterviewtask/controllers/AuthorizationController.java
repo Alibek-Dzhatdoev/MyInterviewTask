@@ -29,25 +29,16 @@ public class AuthorizationController {
         return "registration";
     }
 
-//    @PostMapping(("/registration"))
-//    @ResponseBody
-//    public ResponseEntity<PersonDTO> registerNewPerson
-//             (@RequestBody @Valid RegistrationRequest request)
-//    {
-//        Person person = request.convertToPerson();
-//        registrationService.register(person);
-//        return new ResponseEntity<>(PersonDTO.convertToDto(person), HttpStatus.CREATED);
-//    }
-
     @PostMapping(("/registration"))
     @ResponseBody
     public ResponseEntity<PersonDTO> registerNewPerson
-            (@ModelAttribute @Valid RegistrationRequest request)
+             (@RequestBody @Valid RegistrationRequest request)
     {
         Person person = request.convertToPerson();
         registrationService.register(person);
         return new ResponseEntity<>(PersonDTO.convertToDto(person), HttpStatus.CREATED);
     }
+
 }
 
 
