@@ -1,0 +1,6 @@
+services:
+  my-app:
+#    image: karthequian/helloworld:latest
+    build: ./
+    ports:
+      - "8080:8080"
