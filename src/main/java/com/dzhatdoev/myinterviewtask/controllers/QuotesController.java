@@ -22,6 +22,7 @@ import java.util.List;
 public class QuotesController {
 
     private final QuoteService quoteService;
+    private final PeopleService peopleService;
     private final VoteService voteService;
 
     //Главная страница. Цитаты отсортированы по времени создания +++
@@ -44,7 +45,7 @@ public class QuotesController {
     @ResponseBody
     @PatchMapping("/{id}")
     public ResponseEntity<?> updateQuote(@PathVariable("id") int quoteId, @RequestBody @Valid QuoteDTO quoteDTO) {
-        return quoteService.update(quoteId, quoteDTO);
+        return quoteService.updateOrThrown(quoteId, quoteDTO);
     }
 
     //Удалить цитату ++
@@ -65,16 +66,13 @@ public class QuotesController {
 
     //голосовать за цитату
     @PostMapping("/{id}")
-    public ResponseEntity<?> voteForQuote(@PathVariable("id") int id,
-                                          @RequestParam(name = "votes_for") Boolean voteFor) {
-        boolean voted = voteService.voteReturnVoted(id, voteFor);
-        if (voted) {
-            return ResponseEntity.badRequest().body("You already voted for this quote.");
-        }
-        return ResponseEntity.ok(" Vote counted successfully.");
+    public ResponseEntity<?> voteForQuote(@PathVariable("id") int quoteId,
+                                          @RequestParam(name = "votes_for", required = true) boolean voteFor) {
+        return voteService.voteForQuote(quoteId, voteFor);
     }
 
-    //Просмотр 10 лучших и 10 худших цитат (в идеале график)
+    //TODO просмотр 10 лучших и 10 худших цитат (в идеале график)
+
     @ResponseBody
     @GetMapping("/top")
     public ResponseEntity<?> getTop() {
@@ -91,7 +89,7 @@ public class QuotesController {
     }
 
 
-    //Посмотреть голоса цитаты
+    //TODO посмотреть голоса цитаты
     @ResponseBody
     @GetMapping("/{id}/votes")
     public ResponseEntity<?> quotesVotes(@PathVariable("id") int id) {

@@ -28,8 +28,6 @@ public class QuoteService {
 
     private final PeopleService peopleService;
 
-    private final QuoteService quoteService;
-
 
     public List<Quote> findAll() {
         List<Quote> list = quoteRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
@@ -80,11 +78,12 @@ public class QuoteService {
     }
 
     public ResponseEntity<?> deleteById(int id) {
-        Quote quote = quoteService.findByIdOrThrown(id);
+        Quote quote = findByIdOrThrown(id);
         Person author = quote.getAuthor();
         Person currentUser = peopleService.getCurrentUser();
+
         if (currentUser.getId() == author.getId() || currentUser.getRole().equals("ROLE_ADMIN")) {
-            quoteRepository.deleteById(id);
+            quoteRepository.deleteById(quote.getId());
             return ResponseEntity.ok().body("Quote removed");
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You have no access to delete this quote");
@@ -101,13 +100,13 @@ public class QuoteService {
     }
 
     @Transactional
-    public ResponseEntity<?> update(int id, QuoteDTO quoteDTO) {
-        Person author = quoteService.findByIdOrThrown(id).getAuthor();
+    public ResponseEntity<?> updateOrThrown(int quoteId, QuoteDTO quoteDTO) {
+        Person author = findByIdOrThrown(quoteId).getAuthor();
         Person currentUser = peopleService.getCurrentUser();
         // Проверяем, является ли пользователь владельцем цитаты
         if (currentUser.getId() == author.getId()) {
             // Обновляем данные цитаты
-            Optional<Quote> optQuote = quoteRepository.findById(id);
+            Optional<Quote> optQuote = quoteRepository.findById(quoteId);
             Quote quote = optQuote.orElseThrow(() -> new QuoteNotFoundException("Quote with that id does not exists"));
             quote.setText(quoteDTO.getText());
             quote.setUpdatedAt(LocalDateTime.now());
