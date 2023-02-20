@@ -1,24 +1,19 @@
 package com.dzhatdoev.myinterviewtask.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@RequiredArgsConstructor
 @Entity
 @Table(name = "person")
 public class Person {
@@ -48,11 +43,6 @@ public class Person {
 
     @Column
     private String role;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "voter", orphanRemoval = true, fetch = FetchType.LAZY)
-    @Cascade(CascadeType.PERSIST)
-    private List<Vote> votes = new ArrayList<>();
 
 
     public Person(String username, String email, String password) {

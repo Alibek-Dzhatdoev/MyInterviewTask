@@ -1,7 +1,6 @@
 package com.dzhatdoev.myinterviewtask.models;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,7 +28,7 @@ public class Vote {
     @Column(name = "vote_for", nullable = false)
     private Boolean voteFor;
 
-    @Column(name = "created_at",nullable = false)
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime voteDateTime;
 
     @Override

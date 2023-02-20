@@ -9,6 +9,8 @@ import com.dzhatdoev.myinterviewtask.util.exceptions.QuoteNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,8 @@ public class QuoteService {
     private final QuoteRepository quoteRepository;
 
     private final PeopleService peopleService;
+
+    private final QuoteService quoteService;
 
 
     public List<Quote> findAll() {
@@ -75,8 +79,16 @@ public class QuoteService {
         return quoteRepository.findByAuthor(author);
     }
 
-    public void deleteById(int id) {
-        quoteRepository.deleteById(id);
+    public ResponseEntity<?> deleteById(int id) {
+        Quote quote = quoteService.findByIdOrThrown(id);
+        Person author = quote.getAuthor();
+        Person currentUser = peopleService.getCurrentUser();
+        if (currentUser.getId() == author.getId() || currentUser.getRole().equals("ROLE_ADMIN")) {
+            quoteRepository.deleteById(id);
+            return ResponseEntity.ok().body("Quote removed");
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You have no access to delete this quote");
+        }
     }
 
     @Transactional
@@ -89,12 +101,21 @@ public class QuoteService {
     }
 
     @Transactional
-    public void update(int id, QuoteDTO quoteDTO) {
-        Optional<Quote> optQuote = quoteRepository.findById(id);
-        Quote quote = optQuote.orElseThrow(() -> new QuoteNotFoundException("Quote with that id does not exists"));
-        quote.setText(quoteDTO.getText());
-        quote.setUpdatedAt(LocalDateTime.now());
-        quoteRepository.save(quote);
+    public ResponseEntity<?> update(int id, QuoteDTO quoteDTO) {
+        Person author = quoteService.findByIdOrThrown(id).getAuthor();
+        Person currentUser = peopleService.getCurrentUser();
+        // Проверяем, является ли пользователь владельцем цитаты
+        if (currentUser.getId() == author.getId()) {
+            // Обновляем данные цитаты
+            Optional<Quote> optQuote = quoteRepository.findById(id);
+            Quote quote = optQuote.orElseThrow(() -> new QuoteNotFoundException("Quote with that id does not exists"));
+            quote.setText(quoteDTO.getText());
+            quote.setUpdatedAt(LocalDateTime.now());
+            quoteRepository.save(quote);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Quote updated: " + quoteDTO.getText());
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You have no access to change this quote");
+        }
     }
 
     public Quote getRandomQuote() {

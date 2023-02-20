@@ -20,13 +20,13 @@ public class AuthorizationController {
 
     //Создание учетной записи юзера
     @GetMapping("/registration")
-    public String registrationPage(@ModelAttribute("person") RegistrationRequest registrationRequest) {
+    public String registrationPage() {
         return "registration";
     }
 
     @PostMapping(("/registration"))
     @ResponseBody
-    public ResponseEntity<?> registration (@RequestBody @Valid RegistrationRequest request) {
+    public ResponseEntity<?> registration (@Valid RegistrationRequest request) {
         Person person = request.convertToPerson();
         registrationService.register(person);
         return new ResponseEntity<>(PersonDTO.convertToDto(person), HttpStatus.CREATED);

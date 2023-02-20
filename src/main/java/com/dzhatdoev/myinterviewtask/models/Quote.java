@@ -1,19 +1,13 @@
 package com.dzhatdoev.myinterviewtask.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -32,7 +26,6 @@ public class Quote {
     private String text;
 
     @ManyToOne
-    @JsonBackReference
     @JoinColumn(name = "person_id", referencedColumnName = "id", nullable = false)
     private Person author;
 
@@ -43,11 +36,6 @@ public class Quote {
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime updatedAt;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "quote", orphanRemoval = true, fetch = FetchType.LAZY)
-    @Cascade(CascadeType.ALL)
-    private List<Vote> votes = new ArrayList<>();
 
     @Column(name = "pos_or_neg_votes")
     private int posOrNegVotes;
@@ -82,7 +70,7 @@ public class Quote {
     public String toString() {
         return
                 "text = " + text + '\'' +
-                ", author = " + author +
-                ", posOrNegVotes = " + posOrNegVotes;
+                        ", author = " + author +
+                        ", posOrNegVotes = " + posOrNegVotes;
     }
 }
