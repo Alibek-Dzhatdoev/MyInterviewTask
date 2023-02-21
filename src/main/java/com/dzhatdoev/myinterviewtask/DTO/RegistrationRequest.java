@@ -1,7 +1,6 @@
 package com.dzhatdoev.myinterviewtask.DTO;
 
 import com.dzhatdoev.myinterviewtask.models.Person;
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

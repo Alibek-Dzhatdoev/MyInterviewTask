@@ -1,7 +1,9 @@
 package com.dzhatdoev.myinterviewtask.DTO;
 
 import com.dzhatdoev.myinterviewtask.models.Person;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -32,11 +34,7 @@ public class PersonDTOForAdmin {
         return modelMapper.map(person, PersonDTOForAdmin.class);
     }
 
-    public static Person convertToPerson( PersonDTOForAdmin personDTOForAdmin) {
-        return modelMapper.map(personDTOForAdmin, Person.class);
-    }
-
-    public static List<PersonDTOForAdmin> convertToAdminDtoList (List<Person> personList) {
+    public static List<PersonDTOForAdmin> convertToAdminDtoList(List<Person> personList) {
         List<PersonDTOForAdmin> personDTOList = new ArrayList<>();
         for (Person person : personList) personDTOList.add(convertToDto(person));
         return personDTOList;

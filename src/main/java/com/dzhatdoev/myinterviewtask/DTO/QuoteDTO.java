@@ -1,13 +1,10 @@
 package com.dzhatdoev.myinterviewtask.DTO;
 
-import com.dzhatdoev.myinterviewtask.models.Person;
 import com.dzhatdoev.myinterviewtask.models.Quote;
-import com.dzhatdoev.myinterviewtask.services.PeopleService;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.modelmapper.ModelMapper;
-import org.springframework.context.ApplicationContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +31,7 @@ public class QuoteDTO {
         return mapper.map(quote, QuoteDTO.class);
     }
 
-    public static List<QuoteDTO> convertToDtoList (List<Quote> quoteList) {
+    public static List<QuoteDTO> convertToDtoList(List<Quote> quoteList) {
         List<QuoteDTO> quoteDTOList = new ArrayList<>();
         for (Quote quote : quoteList) quoteDTOList.add(convertToDTO(quote));
         return quoteDTOList;

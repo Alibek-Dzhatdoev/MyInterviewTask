@@ -7,7 +7,6 @@ import com.dzhatdoev.myinterviewtask.models.Person;
 import com.dzhatdoev.myinterviewtask.repositories.PeopleRepository;
 import com.dzhatdoev.myinterviewtask.util.exceptions.PersonNotCreatedException;
 import com.dzhatdoev.myinterviewtask.util.exceptions.PersonNotFoundException;
-import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;

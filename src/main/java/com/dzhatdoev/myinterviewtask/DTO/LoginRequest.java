@@ -1,6 +1,5 @@
 package com.dzhatdoev.myinterviewtask.DTO;
 
-import com.dzhatdoev.myinterviewtask.models.Person;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -15,8 +14,4 @@ public class LoginRequest {
 
     @NotEmpty
     private String password;
-
-    public Person convertToPerson () {
-        return modelMapper.map(this, Person.class);
-    }
 }

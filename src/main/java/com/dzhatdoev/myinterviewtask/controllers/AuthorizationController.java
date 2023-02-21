@@ -26,14 +26,14 @@ public class AuthorizationController {
 
     @PostMapping(("/registration"))
     @ResponseBody
-    public ResponseEntity<?> registration (@Valid RegistrationRequest request) {
+    public ResponseEntity<?> registration(@Valid RegistrationRequest request) {
         Person person = request.convertToPerson();
         registrationService.register(person);
         return new ResponseEntity<>(PersonDTO.convertToDto(person), HttpStatus.CREATED);
     }
 
     @PostMapping(("/registrationform"))
-    public String registrationForm (@ModelAttribute @Valid RegistrationRequest request) {
+    public String registrationForm(@ModelAttribute @Valid RegistrationRequest request) {
         Person person = request.convertToPerson();
         registrationService.register(person);
         return "redirect:/quotes";

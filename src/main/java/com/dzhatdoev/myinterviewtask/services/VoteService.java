@@ -1,6 +1,5 @@
 package com.dzhatdoev.myinterviewtask.services;
 
-import com.dzhatdoev.myinterviewtask.DTO.QuoteDTO;
 import com.dzhatdoev.myinterviewtask.models.Person;
 import com.dzhatdoev.myinterviewtask.models.Quote;
 import com.dzhatdoev.myinterviewtask.models.Vote;
@@ -21,10 +20,6 @@ public class VoteService {
     private final QuoteService quoteService;
     private final PeopleService peopleService;
 
-    private final PeopleService peopleService;
-
-    private final QuoteService quoteService;
-
     public Vote findByQuoteAndVoter(Quote quote, Person voter) {
         return voteRepository.findByQuoteAndVoter(quote, voter);
     }
@@ -39,7 +34,7 @@ public class VoteService {
         return voteRepository.findAllByQuote(quote);
     }
 
-    public ResponseEntity<?> voteForQuote (int quoteId, boolean voteFor) {
+    public ResponseEntity<?> voteForQuote(int quoteId, boolean voteFor) {
         Person voter = peopleService.getCurrentUser();
         Quote quote = quoteService.findByIdOrThrown(quoteId);
         // Проверяем, что пользователь еще не голосовал за или против данной цитаты
@@ -60,32 +55,7 @@ public class VoteService {
         } else {
             quote.incrementVotesAgainst();
         }
-        quoteService.updateOrThrown(quote.getId(), QuoteDTO.convertToDTO(quote));
+        quoteService.updateOrThrown(quote.getId(), quote);
         return ResponseEntity.ok(vote + " Vote counted successfully.");
-    }
-
-
-    @Transactional
-    public boolean voteReturnVoted (int id, Boolean voteFor) {
-        boolean voted = false;
-        Person voter = peopleService.getCurrentUser();
-        Quote quote = quoteService.findByIdOrThrown(id);
-        // Проверяем, что пользователь еще не голосовал за или против данной цитаты
-        if (findByQuoteAndVoter(quote, voter) != null) {
-            voted = true;
-        }
-        // Создаем новый объект голоса и сохраняем его
-        Vote vote = new Vote();
-        vote.setQuote(quote);
-        vote.setVoter(voter);
-        vote.setVoteFor(voteFor);
-        save(vote);
-        if (voteFor) {
-            quote.incrementVotesFor();
-        } else {
-            quote.incrementVotesAgainst();
-        }
-        quoteService.update(quote.getId(), QuoteDTO.convertToDTO(quote));
-        return voted;
     }
 }
