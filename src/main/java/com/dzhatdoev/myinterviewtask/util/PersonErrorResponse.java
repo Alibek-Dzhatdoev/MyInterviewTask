@@ -1,12 +1,12 @@
 package com.dzhatdoev.myinterviewtask.util;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class PersonErrorResponse {
     private String message;
 
