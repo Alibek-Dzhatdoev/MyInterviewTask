@@ -5,14 +5,14 @@ import com.dzhatdoev.myinterviewtask.DTO.RegistrationRequest;
 import com.dzhatdoev.myinterviewtask.models.Person;
 import com.dzhatdoev.myinterviewtask.services.RegistrationService;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthorizationController {
 

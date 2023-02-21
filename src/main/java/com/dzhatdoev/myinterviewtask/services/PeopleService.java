@@ -5,15 +5,17 @@ import com.dzhatdoev.myinterviewtask.DTO.PersonDTOForAdmin;
 import com.dzhatdoev.myinterviewtask.DTO.QuoteDTO;
 import com.dzhatdoev.myinterviewtask.models.Person;
 import com.dzhatdoev.myinterviewtask.repositories.PeopleRepository;
-import com.dzhatdoev.myinterviewtask.security.PersonDetails;
 import com.dzhatdoev.myinterviewtask.util.exceptions.PersonNotCreatedException;
 import com.dzhatdoev.myinterviewtask.util.exceptions.PersonNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,7 @@ public class PeopleService {
     private final PeopleRepository peopleRepository;
     private final QuoteService quoteService;
 
+    @Autowired
     public PeopleService(PeopleRepository peopleRepository, @Lazy QuoteService quoteService) {
         this.peopleRepository = peopleRepository;
         this.quoteService = quoteService;
@@ -111,7 +114,7 @@ public class PeopleService {
 
     public Person getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        PersonDetails personDetails = (PersonDetails) authentication.getPrincipal();
+        UserDetails personDetails = (UserDetails) authentication.getPrincipal();
         return findByUsernameOrThrown(personDetails.getUsername());
     }
 

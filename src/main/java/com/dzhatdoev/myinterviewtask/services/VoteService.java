@@ -5,7 +5,7 @@ import com.dzhatdoev.myinterviewtask.models.Person;
 import com.dzhatdoev.myinterviewtask.models.Quote;
 import com.dzhatdoev.myinterviewtask.models.Vote;
 import com.dzhatdoev.myinterviewtask.repositories.VoteRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class VoteService {
     private final VoteRepository voteRepository;
     private final QuoteService quoteService;
