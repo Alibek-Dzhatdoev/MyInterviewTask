@@ -35,7 +35,7 @@ public class QuotesController {
     @ResponseBody
     @PostMapping
     public ResponseEntity<QuoteDTO> addQuote(@RequestBody @Valid QuoteDTO quoteDTO) {
-        quoteService.save(quoteDTO);
+        quoteService.save(QuoteDTO.convertToQuote(quoteDTO));
         return new ResponseEntity<>(quoteDTO, HttpStatus.CREATED);
     }
 
@@ -43,7 +43,7 @@ public class QuotesController {
     @ResponseBody
     @PatchMapping("/{id}")
     public ResponseEntity<?> updateQuote(@PathVariable("id") int quoteId, @RequestBody @Valid QuoteDTO quoteDTO) {
-        return quoteService.updateOrThrown(quoteId, quoteDTO);
+        return quoteService.updateOrThrown(quoteId, QuoteDTO.convertToQuote(quoteDTO));
     }
 
     //Удалить цитату ++

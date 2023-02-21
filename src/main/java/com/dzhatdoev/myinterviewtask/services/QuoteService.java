@@ -90,8 +90,7 @@ public class QuoteService {
     }
 
     @Transactional
-    public void save(QuoteDTO quoteDTO) {
-        Quote quote = QuoteDTO.convertToQuote(quoteDTO);
+    public void save(Quote quote) {
         quote.setAuthor(peopleService.getCurrentUser());
         quote.setCreatedAt(LocalDateTime.now());
         quote.setUpdatedAt(LocalDateTime.now());
@@ -99,7 +98,7 @@ public class QuoteService {
     }
 
     @Transactional
-    public ResponseEntity<?> updateOrThrown(int quoteId, QuoteDTO quoteDTO) {
+    public ResponseEntity<?> updateOrThrown(int quoteId, Quote quoteToUpdate) {
         Person author = findByIdOrThrown(quoteId).getAuthor();
         Person currentUser = peopleService.getCurrentUser();
         // Проверяем, является ли пользователь владельцем цитаты
@@ -107,10 +106,10 @@ public class QuoteService {
             // Обновляем данные цитаты
             Optional<Quote> optQuote = quoteRepository.findById(quoteId);
             Quote quote = optQuote.orElseThrow(() -> new QuoteNotFoundException("Quote with that id does not exists"));
-            quote.setText(quoteDTO.getText());
+            quote.setText(quoteToUpdate.getText());
             quote.setUpdatedAt(LocalDateTime.now());
             quoteRepository.save(quote);
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Quote updated: " + quoteDTO.getText());
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Quote updated: " + quoteToUpdate.getText());
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You have no access to change this quote");
         }
