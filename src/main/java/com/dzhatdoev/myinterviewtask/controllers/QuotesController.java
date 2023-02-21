@@ -3,7 +3,6 @@ package com.dzhatdoev.myinterviewtask.controllers;
 import com.dzhatdoev.myinterviewtask.DTO.QuoteDTO;
 import com.dzhatdoev.myinterviewtask.models.Quote;
 import com.dzhatdoev.myinterviewtask.models.Vote;
-import com.dzhatdoev.myinterviewtask.services.PeopleService;
 import com.dzhatdoev.myinterviewtask.services.QuoteService;
 import com.dzhatdoev.myinterviewtask.services.VoteService;
 import jakarta.validation.Valid;
@@ -22,7 +21,6 @@ import java.util.List;
 public class QuotesController {
 
     private final QuoteService quoteService;
-    private final PeopleService peopleService;
     private final VoteService voteService;
 
     //Главная страница. Цитаты отсортированы по времени создания +++
@@ -67,7 +65,7 @@ public class QuotesController {
     //голосовать за цитату
     @PostMapping("/{id}")
     public ResponseEntity<?> voteForQuote(@PathVariable("id") int quoteId,
-                                          @RequestParam(name = "votes_for", required = true) boolean voteFor) {
+                                          @RequestParam(name = "votes_for") boolean voteFor) {
         return voteService.voteForQuote(quoteId, voteFor);
     }
 

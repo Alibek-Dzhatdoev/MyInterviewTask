@@ -33,7 +33,6 @@ public class AuthorizationController {
     }
 
     @PostMapping(("/registrationform"))
-    @ResponseBody
     public String registrationForm (@ModelAttribute @Valid RegistrationRequest request) {
         Person person = request.convertToPerson();
         registrationService.register(person);

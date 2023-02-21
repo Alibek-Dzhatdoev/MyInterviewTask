@@ -25,7 +25,6 @@ import java.util.Optional;
 public class QuoteService {
 
     private final QuoteRepository quoteRepository;
-
     private final PeopleService peopleService;
 
 

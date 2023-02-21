@@ -1,14 +1,11 @@
 package com.dzhatdoev.myinterviewtask.controllers;
 
 
-import com.dzhatdoev.myinterviewtask.DTO.PersonDTO;
 import com.dzhatdoev.myinterviewtask.DTO.PersonDTOForAdmin;
 import com.dzhatdoev.myinterviewtask.DTO.QuoteDTO;
 import com.dzhatdoev.myinterviewtask.models.Person;
-import com.dzhatdoev.myinterviewtask.repositories.PeopleRepository;
 import com.dzhatdoev.myinterviewtask.services.PeopleService;
 import com.dzhatdoev.myinterviewtask.services.QuoteService;
-import com.dzhatdoev.myinterviewtask.services.VoteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,7 +22,6 @@ import java.util.List;
 public class UserController {
     private final PeopleService peopleService;
     private final QuoteService quoteService;
-    private final PeopleRepository peopleRepository;
 
 
     //  Посмотреть список всех людей ++
@@ -41,20 +37,7 @@ public class UserController {
     @ResponseBody
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@PathVariable int id) {
-        Person person = peopleService.findByIdOrThrown(id);
-        Person currentUser = peopleService.getCurrentUser();
-        List<QuoteDTO> quoteDtoList = QuoteDTO.convertToDtoList(quoteService.findByAuthor(person));
-        // Проверяем, является ли пользователь администратором или владельцем страницы
-        if (currentUser.getRole().equals("ROLE_ADMIN") || currentUser.getUsername().equals(person.getUsername())) {
-            PersonDTOForAdmin personDTOForAdmin = PersonDTOForAdmin.convertToDto(person);
-            personDTOForAdmin.setQuoteDTOList(quoteDtoList);
-            return ResponseEntity.ok(personDTOForAdmin);
-        } else {
-            // Возвращаем только id, имя пользователя и цитаты, скрывая остальную информацию
-            PersonDTO personDTO = PersonDTO.convertToDto(person);
-            personDTO.setQuoteDTOList(quoteDtoList);
-            return ResponseEntity.ok(personDTO);
-        }
+        return peopleService.findByIdOrThrown(id);
     }
 
     //    Посмотреть свой профиль    ++
@@ -79,15 +62,7 @@ public class UserController {
     @ResponseBody
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable int id) {
-        Person user = peopleService.findByIdOrThrown(id);
-        Person currentUser = peopleService.getCurrentUser();
-        // Проверяем, является ли пользователь администратором или владельцем страницы
-        if (currentUser.getId() == user.getId() || currentUser.getRole().equals("ROLE_ADMIN")) {
-            peopleService.deleteById(id);
-            return ResponseEntity.status(HttpStatus.OK).body("Person removed");
-        } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You do not have permission to delete this person");
-        }
+        return peopleService.deleteById(id);
     }
 
     @PatchMapping("/{id}")

@@ -1,13 +1,17 @@
 package com.dzhatdoev.myinterviewtask.services;
 
+import com.dzhatdoev.myinterviewtask.DTO.PersonDTO;
 import com.dzhatdoev.myinterviewtask.DTO.PersonDTOForAdmin;
+import com.dzhatdoev.myinterviewtask.DTO.QuoteDTO;
 import com.dzhatdoev.myinterviewtask.models.Person;
 import com.dzhatdoev.myinterviewtask.repositories.PeopleRepository;
 import com.dzhatdoev.myinterviewtask.security.PersonDetails;
 import com.dzhatdoev.myinterviewtask.util.exceptions.PersonNotCreatedException;
 import com.dzhatdoev.myinterviewtask.util.exceptions.PersonNotFoundException;
-import lombok.AllArgsConstructor;
 import org.hibernate.Hibernate;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -19,19 +23,38 @@ import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
-@AllArgsConstructor
 public class PeopleService {
 
     private final PeopleRepository peopleRepository;
+    private final QuoteService quoteService;
+
+    public PeopleService(PeopleRepository peopleRepository, @Lazy QuoteService quoteService) {
+        this.peopleRepository = peopleRepository;
+        this.quoteService = quoteService;
+    }
 
     public List<Person> findAll() {
         Hibernate.initialize(peopleRepository.findAll());
         return peopleRepository.findAll();
     }
 
-    public Person findByIdOrThrown(int id) {
+    public ResponseEntity<?> findByIdOrThrown(int id) {
         Optional<Person> foundPerson = peopleRepository.findById(id);
-        return foundPerson.orElseThrow(() -> new PersonNotFoundException("Person with that ID not found"));
+        Person person = foundPerson.orElseThrow(() -> new PersonNotFoundException("Person with that ID not found"));
+        Person currentUser = getCurrentUser();
+        List<QuoteDTO> quoteDtoList = QuoteDTO.convertToDtoList(quoteService.findByAuthor(person));
+        // Проверяем, является ли пользователь администратором или владельцем страницы
+        // и возвращаем полную информацию
+        if (currentUser.getRole().equals("ROLE_ADMIN") || currentUser.getUsername().equals(person.getUsername())) {
+            PersonDTOForAdmin personDTOForAdmin = PersonDTOForAdmin.convertToDto(person);
+            personDTOForAdmin.setQuoteDTOList(quoteDtoList);
+            return ResponseEntity.ok(personDTOForAdmin);
+        } else {
+            // Возвращаем только id, имя пользователя и цитаты, скрывая остальную информацию
+            PersonDTO personDTO = PersonDTO.convertToDto(person);
+            personDTO.setQuoteDTOList(quoteDtoList);
+            return ResponseEntity.ok(personDTO);
+        }
     }
 
     public Person findByUsernameOrThrown(String name) {
@@ -66,14 +89,23 @@ public class PeopleService {
 
     @Transactional
     public void assignAsAdmin(int id) {
-        Person newAdmin = findByIdOrThrown(id);
+        Person newAdmin = peopleRepository.findById(id)
+                .orElseThrow(() -> new PersonNotFoundException("Person with that ID not found"));
         newAdmin.setRole("ROLE_ADMIN");
         peopleRepository.save(newAdmin);
     }
 
     @Transactional()
-    public void deleteById(int id) {
-        peopleRepository.deleteById(id);
+    public ResponseEntity<?> deleteById(int id) {
+        Person user = peopleRepository.findById(id).orElseThrow(() -> new PersonNotFoundException("Person with that ID not found"));
+        Person currentUser = getCurrentUser();
+        // Проверяем, является ли пользователь администратором или владельцем страницы
+        if (currentUser.getId() == user.getId() || currentUser.getRole().equals("ROLE_ADMIN")) {
+            peopleRepository.deleteById(id);
+            return ResponseEntity.status(HttpStatus.OK).body("Person removed");
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You do not have permission to delete this person");
+        }
     }
 
 
