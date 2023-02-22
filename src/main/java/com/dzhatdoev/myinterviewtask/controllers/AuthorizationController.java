@@ -20,7 +20,7 @@ public class AuthorizationController {
 
     //Создание учетной записи юзера
     @GetMapping("/registration")
-    public String registrationPage() {
+    public String registrationPage(@ModelAttribute ("person") Person person) {
         return "registration";
     }
 
